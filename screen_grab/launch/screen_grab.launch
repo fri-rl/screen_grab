@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <launch>
 
-  <arg name="update_rate" default="10" />
-  <arg name="use_image_show" default="true" />
+  <arg name="update_rate" default="60" />
+  <arg name="use_image_show" default="false" />
   <arg name="use_image_view" default="false" />
+  <arg name="image" default="image" />
+  <arg name="prefix" default="" />
 
-  <node name="nodelet_manager" pkg="nodelet" type="nodelet"
+  <node name="$(arg prefix)_nodelet_manager" pkg="nodelet" type="nodelet"
       args="manager" output="screen" />
 
-  <node name="screen_grab" pkg="nodelet" type="nodelet"
-      args="load screen_grab/ScreenGrab nodelet_manager" output="screen" >
+  <node name="$(arg prefix)_screen_grab" pkg="nodelet" type="nodelet"
+      args="load screen_grab/ScreenGrab $(arg prefix)_nodelet_manager" output="screen" >
+    <remap from="image" to="$(arg image)"/>
     <param name="update_rate" value="$(arg update_rate)" />
     <param name="x_offset" value="50" />
     <param name="y_offset" value="50" />
-    <param name="width" value="500" />
-    <param name="height" value="500" />
+    <param name="width" value="1280" />
+    <param name="height" value="800" />
   </node>
 
   <!-- image show takes much less cpu that image_view -->
-  <node name="image_show1" pkg="nodelet" type="nodelet"
+  <node name="$(arg prefix)_image_show1" pkg="nodelet" type="nodelet"
       args="load image_show/ImageShow nodelet_manager" output="screen"
       if="$(arg use_image_show)" >
   </node>
@@ -41,7 +44,7 @@
   </node>
   -->
 
-  <node name="image_view" pkg="nodelet" type="nodelet"
+  <node name="$(arg prefix)_image_view" pkg="nodelet" type="nodelet"
       args="load image_view/image nodelet_manager" output="screen"
       if="$(arg use_image_view)" >
   </node>
